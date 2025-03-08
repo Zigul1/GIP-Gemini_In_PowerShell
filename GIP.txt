@@ -1,0 +1,83 @@
+function Gemini {
+    <#
+    .SYNOPSIS
+    Interroga Gemini, il chatbot AI, direttamente nel terminale (richiede chiave API).
+
+    .DESCRIPTION
+    Usando il comando "Gemini" è possibile chiedere informazioni o notizie a Gemini;
+    sono inoltre disponibili alcuni parametri per interrogazioni più mirate riguardanti l'uso di PowerShell.
+
+    .PARAMETER errore
+    Gemini spiega l'ultimo errore registrato nel terminale (sessione corrente).
+    .PARAMETER ultimo_comando
+    Gemini spiega l'ultimo comando eseguito (sessione corrente).
+    .PARAMETER spiega
+    Si può digitare un comando o uno script che verrà poi spiegato da Gemini.
+    .PARAMETER tutor
+    Si può chiedere a Gemini come usare PowerShell per ottenere un determinato risultato.
+    .PARAMETER txt
+    La risposta di Gemini viene aperta non nel terminale, ma in un file TXT temporaneo (che si cancella alla sua chiusura).
+        
+    .LINK
+
+    #>
+	[cmdletbinding()]
+    param (
+        [switch]$errore,
+        [switch]$ultimo_comando,
+        [switch]$spiega,
+        [switch]$tutor,
+        [switch]$txt
+    )
+    if ($errore) {
+        $domanda = "Spiega brevemente le possibili cause e come correggere questo errore in PowerShell: $Error"
+    } elseif ($ultimo_comando) {
+        $domanda = "Spiega brevemente il comando PowerShell: $((Get-History -Count 1).CommandLine)"
+    } elseif ($spiega) {
+        $comando = Read-Host "Scrivi il comando o script da spiegare"
+        $domanda = "Spiega brevemente questo codice PowerShell: $comando"
+    }elseif ($tutor) {
+        $richiesta = Read-Host "Chiedi a Gemini come usare PowerShell per..."
+        $domanda = "In PowerShell, come $($richiesta)"
+    } else {
+        $domanda = Read-Host "Chiedi a Gemini"   # Domanda generica
+    }
+
+    # Domanda in formato json
+    $headers = @{
+        "Content-Type" = "application/json"
+    }
+    $body = @{
+        contents = @(
+            @{
+                parts = @(
+                    @{
+                        text = "$($domanda)"
+                    }
+                )
+            }
+        )
+    } | ConvertTo-Json -Depth 5
+    
+    # Interrogazione con API
+    $responso = Invoke-WebRequest `
+        -Uri "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" `
+        -Headers $headers `
+        -Method POST `
+        -Body $body
+    
+    # Visualizzazione testo della risposta
+    $responsoObj = $responso.Content | ConvertFrom-Json
+    $risposta = $responsoObj.candidates[0].content.parts[0].text
+    if ($txt) {   # visualizza in file temporaneo TXT
+        $tempFile = New-TemporaryFile
+        $txtFilePath = [System.IO.Path]::ChangeExtension($tempFile.FullName, ".txt")
+        Rename-Item -Path $tempFile.FullName -NewName $txtFilePath
+        $risposta | Out-File -FilePath $txtFilePath
+        $process = Start-Process $txtFilePath -PassThru
+        $process.WaitForExit()
+        Remove-Item $txtFilePath -Force
+    } else {   # visualizza nel terminale
+        Write-Host $risposta -BackgroundColor DarkCyan -ForegroundColor White
+    }
+}
