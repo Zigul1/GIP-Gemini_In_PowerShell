@@ -1,7 +1,7 @@
 <h1> GIP </h1>
 <h2> (Gemini In PowerShell) </h2>
 
-Utilizzando il codice nel *file* *GIP.txt* e una chiave API scaricabile da <a href=https://aistudio.google.com/welcome>qui</a> (richiede *account* Google), è possibile integrare Gemini, il *chatbot* AI, nel terminale PowerShell (per informazioni più dettagliate leggere <a href=https://turbolab.it/>l'articolo su TurboLab</a>).
+Utilizzando il codice nel *file* *GIP.txt* e una chiave API scaricabile da <a href=https://aistudio.google.com/welcome>qui</a> (richiede *account* Google), è possibile integrare Gemini, il *chatbot* AI, nel terminale PowerShell (per informazioni più dettagliate leggere <a href=https://turbolab.it/4310>l'articolo su TurboLab</a>).
 
 **Per impostare il comando *Gemini* in PowerShell:**
 - copiare il contenuto del *file* *GIP.txt*
@@ -20,3 +20,4 @@ Utilizzando il codice nel *file* *GIP.txt* e una chiave API scaricabile da <a hr
 - premere Invio e attendere la risposta
 
 <h3>Video con spiegazioni ed esempi pratici</h3>
+https://www.youtube.com/watch?v=WG5kOuJqSvg
