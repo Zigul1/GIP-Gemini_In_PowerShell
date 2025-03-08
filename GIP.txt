@@ -19,6 +19,9 @@ function Gemini {
     La risposta di Gemini viene aperta non nel terminale, ma in un file TXT temporaneo (che si cancella alla sua chiusura).
         
     .LINK
+    https://github.com/Zigul1/GIP-Gemini_In_PowerShell
+    https://youtu.be/WG5kOuJqSvg
+    https://turbolab.it/4310
 
     #>
 	[cmdletbinding()]
